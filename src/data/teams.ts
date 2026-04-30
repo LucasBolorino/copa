@@ -107,12 +107,12 @@ export const TEAMS: Team[] = [
     ]),
   },
   {
-    code: 'CAM', name: 'Camarões', flag: '🇨🇲', confederation: 'CAF', color: '#007A5E',
-    stickers: makeStickers('CAM', [
-      'André Onana', 'Devis Epassy', 'Michael Ngadeu', 'Jean-Charles Castelletto',
-      'Collins Fai', 'Nouhou Tolo', 'Stéphane Bahoken', 'Samuel Gouet',
-      'Vincent Aboubakar', 'Karl Toko Ekambi', 'Bryan Mbeumo', 'André-Frank Zambo Anguissa',
-      'Clinton Njie', 'Gael Ondoua', 'Jeando Fuchs', 'Léandre Tawamba', 'Duplexe Tchamba',
+    code: 'CAN', name: 'Canadá', flag: '🇨🇦', confederation: 'CONCACAF', color: '#FF0000',
+    stickers: makeStickers('CAN', [
+      'Milan Borjan', 'Maxime Crépeau', 'Alistair Johnston', 'Kamal Miller',
+      'Derek Cornelius', 'Richie Laryea', 'Alphonso Davies', 'Jonathan Osorio',
+      'Atiba Hutchinson', 'Stephen Eustáquio', 'Samuel Piette', 'Ismael Koné',
+      'Jonathan David', 'Cyle Larin', 'Tajon Buchanan', 'Liam Millar', 'Scott Kennedy',
     ]),
   },
   {

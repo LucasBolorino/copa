@@ -7,20 +7,9 @@ import CollectionPage from './components/CollectionPage';
 import StatsPage from './components/StatsPage';
 import LoginPage from './components/LoginPage';
 
-export default function App() {
-  const [authed, setAuthed] = useState<boolean | null>(null);
+function AuthenticatedApp() {
   const [page, setPage] = useState<PageType>('inicio');
   const { stats, toggle, getQuantity, resetCollection } = useCollection();
-
-  useEffect(() => {
-    fetch('/api/auth/check')
-      .then(r => setAuthed(r.ok))
-      .catch(() => setAuthed(false));
-  }, []);
-
-  if (authed === null) return null;
-
-  if (!authed) return <LoginPage onLogin={() => setAuthed(true)} />;
 
   return (
     <div className="app">
@@ -45,4 +34,19 @@ export default function App() {
       <NavBar current={page} setPage={setPage} />
     </div>
   );
+}
+
+export default function App() {
+  const [authed, setAuthed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch('/api/auth/check')
+      .then(r => setAuthed(r.ok))
+      .catch(() => setAuthed(false));
+  }, []);
+
+  if (authed === null) return null;
+  if (!authed) return <LoginPage onLogin={() => setAuthed(true)} />;
+
+  return <AuthenticatedApp />;
 }

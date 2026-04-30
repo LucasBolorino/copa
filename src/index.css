@@ -73,6 +73,11 @@ html, body {
   justify-content: space-around;
   box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
   z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+body.scroll-down .navbar {
+  transform: translateX(-50%) translateY(100%);
 }
 
 .nav-item {
@@ -242,9 +247,13 @@ html, body {
 .collection-sticky-header {
   flex-shrink: 0;
   background: var(--bg);
-  padding: 18px 16px 10px;
+  padding: 10px 16px 10px;
   z-index: 10;
   border-bottom: 1px solid var(--border);
+}
+
+.collection-header-scroll {
+  padding: 18px 0 12px;
 }
 
 .collection-scroll-body {

@@ -66,16 +66,27 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
   useEffect(() => {
     const body = scrollBodyRef.current;
     if (!body) return;
+    let lastScrollTop = 0;
 
     function onScroll() {
+      const scrollTop = body!.scrollTop;
+
+      // Hide/show navbar based on scroll direction
+      if (scrollTop > lastScrollTop && scrollTop > 40) {
+        document.body.classList.add('scroll-down');
+      } else {
+        document.body.classList.remove('scroll-down');
+      }
+      lastScrollTop = scrollTop;
+
       if (isScrollingFromClick.current) return;
-      const scrollTop = body!.scrollTop + 80;
+      const bodyRect = body!.getBoundingClientRect();
       let bestCode: string | null = null;
       let bestTop = -Infinity;
       for (const [code, el] of Object.entries(sectionRefs.current)) {
         if (!el) continue;
-        const top = el.offsetTop;
-        if (top <= scrollTop && top > bestTop) {
+        const top = el.getBoundingClientRect().top - bodyRect.top;
+        if (top <= 100 && top > bestTop) {
           bestTop = top;
           bestCode = code;
         }
@@ -87,7 +98,10 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
     }
 
     body.addEventListener('scroll', onScroll, { passive: true });
-    return () => body.removeEventListener('scroll', onScroll);
+    return () => {
+      body.removeEventListener('scroll', onScroll);
+      document.body.classList.remove('scroll-down');
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollTabIntoView]);
 
@@ -125,20 +139,6 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
 
       {/* ── Sticky top header ── */}
       <div className="collection-sticky-header" ref={stickyHeaderRef}>
-        <div className="collection-header">
-          <div>
-            <h2 className="page-title">Minha Coleção</h2>
-            <p className="page-subtitle">Gerencie seu estoque oficial</p>
-          </div>
-          <div className="collection-badge">
-            <span className="collection-pct">{pct}%</span>
-          </div>
-        </div>
-
-        <div className="collection-progress-bar-wrap">
-          <div className="collection-progress-bar-fill" style={{ width: `${pct}%` }} />
-        </div>
-        <p className="collection-count">{obtained} de {TOTAL_STICKERS} figurinhas</p>
 
         {/* Search */}
         <div className="search-wrap">
@@ -202,6 +202,23 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
 
       {/* ── Scrollable body ── */}
       <div className="collection-scroll-body" ref={scrollBodyRef}>
+
+        {/* Header scrollável */}
+        <div className="collection-header-scroll">
+          <div className="collection-header">
+            <div>
+              <h2 className="page-title">Minha Coleção</h2>
+              <p className="page-subtitle">Gerencie seu estoque oficial</p>
+            </div>
+            <div className="collection-badge">
+              <span className="collection-pct">{pct}%</span>
+            </div>
+          </div>
+          <div className="collection-progress-bar-wrap">
+            <div className="collection-progress-bar-fill" style={{ width: `${pct}%` }} />
+          </div>
+          <p className="collection-count">{obtained} de {TOTAL_STICKERS} figurinhas</p>
+        </div>
 
         <div className="sticker-sections">
           {teamsWithStickers.length === 0 ? (

@@ -2,67 +2,31 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Collection } from '../types';
 import { ALL_TEAMS, TOTAL_STICKERS } from '../data/teams';
 
-const STORAGE_KEY = 'copa2026_collection';
-
-function loadCollection(): Collection {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveCollection(col: Collection) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(col));
-}
-
 export function useCollection() {
-  const [collection, setCollection] = useState<Collection>(loadCollection);
+  const [collection, setCollection] = useState<Collection>({});
 
   useEffect(() => {
-    saveCollection(collection);
-  }, [collection]);
-
-  const setQuantity = useCallback((stickerId: string, quantity: number) => {
-    setCollection(prev => {
-      const next = { ...prev };
-      if (quantity <= 0) {
-        delete next[stickerId];
-      } else {
-        next[stickerId] = { quantity };
-      }
-      return next;
-    });
-  }, []);
-
-  const increment = useCallback((stickerId: string) => {
-    setCollection(prev => {
-      const current = prev[stickerId]?.quantity ?? 0;
-      return { ...prev, [stickerId]: { quantity: current + 1 } };
-    });
-  }, []);
-
-  const decrement = useCallback((stickerId: string) => {
-    setCollection(prev => {
-      const current = prev[stickerId]?.quantity ?? 0;
-      if (current <= 1) {
-        const next = { ...prev };
-        delete next[stickerId];
-        return next;
-      }
-      return { ...prev, [stickerId]: { quantity: current - 1 } };
-    });
+    fetch('/api/collection')
+      .then(r => r.json())
+      .then(setCollection)
+      .catch(() => {});
   }, []);
 
   const toggle = useCallback((stickerId: string) => {
     setCollection(prev => {
-      if (prev[stickerId]?.quantity >= 1) {
+      const current = prev[stickerId]?.quantity ?? 0;
+      const quantity = current >= 1 ? 0 : 1;
+      fetch(`/api/collection/${stickerId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity }),
+      }).catch(() => {});
+      if (quantity <= 0) {
         const next = { ...prev };
         delete next[stickerId];
         return next;
       }
-      return { ...prev, [stickerId]: { quantity: 1 } };
+      return { ...prev, [stickerId]: { quantity } };
     });
   }, []);
 
@@ -70,16 +34,16 @@ export function useCollection() {
     return collection[stickerId]?.quantity ?? 0;
   }, [collection]);
 
+  const resetCollection = useCallback(() => {
+    setCollection({});
+    fetch('/api/collection', { method: 'DELETE' }).catch(() => {});
+  }, []);
+
   const stats = (() => {
     let obtained = 0;
-
-    for (const team of ALL_TEAMS) {
-      for (const sticker of team.stickers) {
-        const qty = collection[sticker.id]?.quantity ?? 0;
-        if (qty >= 1) obtained++;
-      }
-    }
-
+    for (const team of ALL_TEAMS)
+      for (const sticker of team.stickers)
+        if ((collection[sticker.id]?.quantity ?? 0) >= 1) obtained++;
     return {
       obtained,
       missing: TOTAL_STICKERS - obtained,
@@ -88,9 +52,5 @@ export function useCollection() {
     };
   })();
 
-  const resetCollection = useCallback(() => {
-    setCollection({});
-  }, []);
-
-  return { collection, stats, increment, decrement, toggle, getQuantity, setQuantity, resetCollection };
+  return { stats, toggle, getQuantity, resetCollection };
 }

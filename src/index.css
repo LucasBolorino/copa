@@ -44,7 +44,7 @@ html, body {
 .app {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -53,8 +53,8 @@ html, body {
 
 .app-content {
   flex: 1;
-  overflow-y: auto;
-  padding-bottom: calc(var(--navbar-h) + 8px);
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* ── Navbar ── */
@@ -96,7 +96,7 @@ html, body {
 .nav-item.active svg { transform: translateY(-2px); }
 
 /* ── Page base ── */
-.page { padding: 24px 16px 16px; min-height: 100%; }
+.page { padding: 24px 16px calc(var(--navbar-h) + 16px); height: 100%; overflow-y: auto; box-sizing: border-box; }
 
 /* ── Cards ── */
 .card {
@@ -235,7 +235,7 @@ html, body {
 .collection-page-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - var(--navbar-h));
+  height: 100%;
   overflow: hidden;
 }
 
@@ -444,6 +444,61 @@ html, body {
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+.login-wrap {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+}
+.login-icon { font-size: 48px; }
+.login-title { font-size: 26px; font-weight: 800; color: var(--text); margin: 4px 0 0; }
+.login-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.login-form { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.login-input {
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+.login-input:focus { border-color: var(--green); }
+.login-input-error { border-color: #ef4444 !important; }
+.login-error { font-size: 12px; color: #ef4444; text-align: center; margin: 0; }
+.login-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--green);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ============================================================
    STICKER CARD

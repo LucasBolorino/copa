@@ -95,11 +95,7 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
     return ALL_TEAMS.filter(team => {
       if (search.trim()) {
         const q = search.trim().toLowerCase();
-        return (
-          team.name.toLowerCase().includes(q) ||
-          team.code.toLowerCase().includes(q) ||
-          team.stickers.some(s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q))
-        );
+        return team.stickers.some(s => s.id.toLowerCase().includes(q));
       }
       return true;
     });
@@ -109,9 +105,7 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
     let stickers = team.stickers;
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      stickers = stickers.filter(
-        s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q)
-      );
+      stickers = stickers.filter(s => s.id.toLowerCase().includes(q));
     }
     switch (filter) {
       case 'obtidas':  return stickers.filter(s => getQuantity(s.id) >= 1);

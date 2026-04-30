@@ -7,7 +7,7 @@ interface Props {
   onToggle: () => void;
 }
 
-export default function StickerCard({ sticker, quantity, teamColor, onToggle }: Props) {
+export default function StickerCard({ sticker, quantity, onToggle }: Props) {
   const isObtained = quantity >= 1;
   const isShiny = sticker.shiny === true;
   const obtainedColor = isShiny ? '#FFB800' : '#4CAF50';

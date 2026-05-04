@@ -1,4 +1,4 @@
-import { Home, BookOpen, BarChart2 } from 'lucide-react';
+import { Home, BookOpen, BarChart2, Users } from 'lucide-react';
 import type { PageType } from '../types';
 
 interface Props {
@@ -10,6 +10,7 @@ const NAV_ITEMS: { key: PageType; label: string; Icon: typeof Home }[] = [
   { key: 'inicio', label: 'Início', Icon: Home },
   { key: 'colecao', label: 'Coleção', Icon: BookOpen },
   { key: 'estatisticas', label: 'Stats', Icon: BarChart2 },
+  { key: 'usuarios', label: 'Usuários', Icon: Users },
 ];
 
 export default function NavBar({ current, setPage }: Props) {

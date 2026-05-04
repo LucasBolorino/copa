@@ -135,6 +135,21 @@ app.post('/api/logout', (req, res) => {
   res.json({ ok: true });
 });
 
+app.get('/api/users/stats', requireAuth, async (_req, res) => {
+  const { rows } = await pool.query(`
+    SELECT u.username, COUNT(c.sticker_id)::int AS obtained
+    FROM users u
+    LEFT JOIN collection c ON c.user_id = u.id
+    GROUP BY u.id, u.username
+    ORDER BY obtained DESC
+  `);
+  res.json(rows.map(r => ({
+    username: r.username,
+    obtained: r.obtained,
+    pct: Math.round(r.obtained / 994 * 100),
+  })));
+});
+
 app.get('/api/auth/check', requireAuth, (_req, res) => {
   res.json({ ok: true });
 });

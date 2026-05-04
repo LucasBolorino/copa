@@ -6,6 +6,7 @@ import HomePage from './components/HomePage';
 import CollectionPage from './components/CollectionPage';
 import StatsPage from './components/StatsPage';
 import LoginPage from './components/LoginPage';
+import UsersPage from './components/UsersPage';
 
 function AuthenticatedApp() {
   const [page, setPage] = useState<PageType>('inicio');
@@ -30,6 +31,7 @@ function AuthenticatedApp() {
             resetCollection={resetCollection}
           />
         )}
+        {page === 'usuarios' && <UsersPage />}
       </div>
       <NavBar current={page} setPage={setPage} />
     </div>

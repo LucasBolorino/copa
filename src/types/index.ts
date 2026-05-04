@@ -26,4 +26,4 @@ export interface Collection {
 }
 
 export type FilterType = 'todas' | 'obtidas' | 'faltantes';
-export type PageType = 'inicio' | 'colecao' | 'estatisticas';
+export type PageType = 'inicio' | 'colecao' | 'estatisticas' | 'usuarios';

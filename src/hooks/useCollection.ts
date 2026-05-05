@@ -48,7 +48,7 @@ export function useCollection() {
       obtained,
       missing: TOTAL_STICKERS - obtained,
       total: TOTAL_STICKERS,
-      progress: Math.round((obtained / TOTAL_STICKERS) * 100),
+      progress: Math.floor((obtained / TOTAL_STICKERS) * 100),
     };
   })();
 

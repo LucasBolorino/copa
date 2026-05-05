@@ -8,9 +8,7 @@ const { Pool } = pg;
 const app = express();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const COOKIE = 'copa_auth';
-
-// Map<token, userId>
-const sessions = new Map();
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 dias
 
 app.use(express.json());
 
@@ -44,6 +42,15 @@ await pool.query(`
     id       SERIAL PRIMARY KEY,
     username VARCHAR UNIQUE NOT NULL,
     password VARCHAR NOT NULL
+  )
+`);
+
+// Tabela de sessões persistentes
+await pool.query(`
+  CREATE TABLE IF NOT EXISTS sessions (
+    token      VARCHAR PRIMARY KEY,
+    user_id    INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW()
   )
 `);
 
@@ -103,11 +110,12 @@ function parseCookies(req) {
   );
 }
 
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const token = parseCookies(req)[COOKIE];
-  const userId = sessions.get(token);
-  if (!userId) return res.status(401).json({ error: 'unauthorized' });
-  req.userId = userId;
+  if (!token) return res.status(401).json({ error: 'unauthorized' });
+  const { rows } = await pool.query('SELECT user_id FROM sessions WHERE token = $1', [token]);
+  if (rows.length === 0) return res.status(401).json({ error: 'unauthorized' });
+  req.userId = rows[0].user_id;
   next();
 }
 
@@ -123,14 +131,14 @@ app.post('/api/login', async (req, res) => {
   if (!ok) return res.status(401).json({ error: 'invalid' });
 
   const token = crypto.randomUUID();
-  sessions.set(token, rows[0].id);
-  res.setHeader('Set-Cookie', `${COOKIE}=${token}; Path=/; HttpOnly; SameSite=Strict`);
+  await pool.query('INSERT INTO sessions (token, user_id) VALUES ($1, $2)', [token, rows[0].id]);
+  res.setHeader('Set-Cookie', `${COOKIE}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${COOKIE_MAX_AGE}`);
   res.json({ ok: true });
 });
 
-app.post('/api/logout', (req, res) => {
+app.post('/api/logout', async (req, res) => {
   const token = parseCookies(req)[COOKIE];
-  sessions.delete(token);
+  if (token) await pool.query('DELETE FROM sessions WHERE token = $1', [token]);
   res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
   res.json({ ok: true });
 });
@@ -146,7 +154,7 @@ app.get('/api/users/stats', requireAuth, async (_req, res) => {
   res.json(rows.map(r => ({
     username: r.username,
     obtained: r.obtained,
-    pct: Math.round(r.obtained / 994 * 100),
+    pct: Math.floor(r.obtained / 994 * 100),
   })));
 });
 

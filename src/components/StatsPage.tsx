@@ -20,7 +20,7 @@ export default function StatsPage({ getQuantity, resetCollection }: Props) {
   const teamStats = ALL_TEAMS.map(team => {
     const total = team.stickers.length;
     const obtained = team.stickers.filter(s => getQuantity(s.id) >= 1).length;
-    return { team, total, obtained, pct: Math.round((obtained / total) * 100) };
+    return { team, total, obtained, pct: Math.floor((obtained / total) * 100) };
   }).sort((a, b) => b.pct - a.pct);
 
   function handleReset() {
@@ -43,7 +43,7 @@ export default function StatsPage({ getQuantity, resetCollection }: Props) {
       <div className="card">
         <h3 className="section-title">Por Confederação</h3>
         {Object.entries(confStats).map(([conf, { obtained, total }]) => {
-          const pct = Math.round((obtained / total) * 100);
+          const pct = Math.floor((obtained / total) * 100);
           return (
             <div key={conf} className="conf-stat-row">
               <div className="conf-stat-info">

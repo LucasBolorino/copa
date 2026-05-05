@@ -132,78 +132,15 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
     .map(team => ({ team, stickers: getFilteredStickers(team) }))
     .filter(({ stickers }) => stickers.length > 0);
 
-  const pct = Math.round((obtained / TOTAL_STICKERS) * 100);
+  const pct = Math.floor((obtained / TOTAL_STICKERS) * 100);
 
   return (
     <div className="collection-page-wrap">
 
-      {/* ── Sticky top header ── */}
-      <div className="collection-sticky-header" ref={stickyHeaderRef}>
-
-        {/* Search */}
-        <div className="search-wrap">
-          <input
-            className="search-input"
-            type="text"
-            placeholder="Buscar figurinha ou seleção..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && (
-            <button className="search-clear" onClick={() => setSearch('')}>✕</button>
-          )}
-        </div>
-
-        {/* Filter tabs */}
-        <div className="filter-tabs">
-          {FILTERS.map(f => (
-            <button
-              key={f.key}
-              className={`filter-tab ${filter === f.key ? 'active' : ''}`}
-              onClick={() => setFilter(f.key)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Team tabs — draggable */}
-        <div
-          className="conf-tabs"
-          ref={(el) => {
-            (dragScroll.ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
-            tabsContainerRef.current = el;
-          }}
-          onMouseDown={dragScroll.onMouseDown}
-          onMouseMove={dragScroll.onMouseMove}
-          onMouseUp={dragScroll.onMouseUp}
-          onMouseLeave={dragScroll.onMouseLeave}
-          style={{ cursor: 'grab' }}
-        >
-          <button
-            ref={el => { tabRefs.current['TODAS'] = el; }}
-            className={`conf-tab ${activeTeamCode === 'TODAS' ? 'active' : ''}`}
-            onClick={() => handleTabClick('TODAS')}
-          >
-            Todas
-          </button>
-          {ALL_TEAMS.map(team => (
-            <button
-              key={team.code}
-              ref={el => { tabRefs.current[team.code] = el; }}
-              className={`conf-tab ${activeTeamCode === team.code ? 'active' : ''}`}
-              onClick={() => handleTabClick(team.code)}
-            >
-              {team.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Scrollable body ── */}
+      {/* ── Single scrollable body ── */}
       <div className="collection-scroll-body" ref={scrollBodyRef}>
 
-        {/* Header scrollável */}
+        {/* Header — rola junto */}
         <div className="collection-header-scroll">
           <div className="collection-header">
             <div>
@@ -218,6 +155,69 @@ export default function CollectionPage({ getQuantity, toggle, obtained }: Props)
             <div className="collection-progress-bar-fill" style={{ width: `${pct}%` }} />
           </div>
           <p className="collection-count">{obtained} de {TOTAL_STICKERS} figurinhas</p>
+        </div>
+
+        {/* Controles — ficam fixos ao rolar */}
+        <div className="collection-sticky-header" ref={stickyHeaderRef}>
+
+          {/* Search */}
+          <div className="search-wrap">
+            <input
+              className="search-input"
+              type="text"
+              placeholder="Buscar figurinha ou seleção..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+              <button className="search-clear" onClick={() => setSearch('')}>✕</button>
+            )}
+          </div>
+
+          {/* Filter tabs */}
+          <div className="filter-tabs">
+            {FILTERS.map(f => (
+              <button
+                key={f.key}
+                className={`filter-tab ${filter === f.key ? 'active' : ''}`}
+                onClick={() => setFilter(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Team tabs — draggable */}
+          <div
+            className="conf-tabs"
+            ref={(el) => {
+              (dragScroll.ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
+              tabsContainerRef.current = el;
+            }}
+            onMouseDown={dragScroll.onMouseDown}
+            onMouseMove={dragScroll.onMouseMove}
+            onMouseUp={dragScroll.onMouseUp}
+            onMouseLeave={dragScroll.onMouseLeave}
+            style={{ cursor: 'grab' }}
+          >
+            <button
+              ref={el => { tabRefs.current['TODAS'] = el; }}
+              className={`conf-tab ${activeTeamCode === 'TODAS' ? 'active' : ''}`}
+              onClick={() => handleTabClick('TODAS')}
+            >
+              Todas
+            </button>
+            {ALL_TEAMS.map(team => (
+              <button
+                key={team.code}
+                ref={el => { tabRefs.current[team.code] = el; }}
+                className={`conf-tab ${activeTeamCode === team.code ? 'active' : ''}`}
+                onClick={() => handleTabClick(team.code)}
+              >
+                {team.name}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="sticker-sections">

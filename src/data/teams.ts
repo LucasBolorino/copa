@@ -14,17 +14,16 @@ function makeStickers(code: string, players: string[]): Sticker[] {
 }
 
 // ── Seção INICIAL ────────────────────────────────────────────
-// FWC4 e FWC8 não são brilhantes; demais são brilhantes
 const INICIAL_STICKERS: Sticker[] = [
-  { id: '00',   name: 'Capa do Álbum',              type: 'special', number: 0, shiny: true  },
-  { id: 'FWC1', name: 'FIFA World Cup 2026',         type: 'special', number: 1, shiny: true  },
-  { id: 'FWC2', name: 'Troféu FIFA',                 type: 'special', number: 2, shiny: true  },
-  { id: 'FWC3', name: 'Mascote Oficial',             type: 'special', number: 3, shiny: true  },
-  { id: 'FWC4', name: 'Logo Oficial',                type: 'special', number: 4, shiny: false },
-  { id: 'FWC5', name: 'SoFi Stadium – Los Angeles',  type: 'special', number: 5, shiny: true  },
-  { id: 'FWC6', name: 'MetLife Stadium – Nova York', type: 'special', number: 6, shiny: true  },
+  { id: '00',   name: 'Capa do Álbum',              type: 'special', number: 0, shiny: true },
+  { id: 'FWC1', name: 'FIFA World Cup 2026',         type: 'special', number: 1, shiny: true },
+  { id: 'FWC2', name: 'Troféu FIFA',                 type: 'special', number: 2, shiny: true },
+  { id: 'FWC3', name: 'Mascote Oficial',             type: 'special', number: 3, shiny: true },
+  { id: 'FWC4', name: 'Logo Oficial',                type: 'special', number: 4, shiny: true },
+  { id: 'FWC5', name: 'SoFi Stadium – Los Angeles',  type: 'special', number: 5, shiny: true },
+  { id: 'FWC6', name: 'MetLife Stadium – Nova York', type: 'special', number: 6, shiny: true },
   { id: 'FWC7', name: 'Estadio Azteca – Cidade do México', type: 'special', number: 7, shiny: true },
-  { id: 'FWC8', name: 'BC Place – Vancouver',        type: 'special', number: 8, shiny: false },
+  { id: 'FWC8', name: 'BC Place – Vancouver',        type: 'special', number: 8, shiny: true },
 ];
 
 // ── Seção CAMPEÃS ────────────────────────────────────────────

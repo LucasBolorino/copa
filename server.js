@@ -158,6 +158,19 @@ app.get('/api/users/stats', requireAuth, async (_req, res) => {
   })));
 });
 
+app.get('/api/users/:username/collection', requireAuth, async (req, res) => {
+  const { username } = req.params;
+  const userRes = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+  if (!userRes.rows[0]) return res.status(404).json({ error: 'user not found' });
+  const { rows } = await pool.query(
+    'SELECT sticker_id, quantity FROM collection WHERE user_id = $1',
+    [userRes.rows[0].id]
+  );
+  const result = {};
+  for (const row of rows) result[row.sticker_id] = { quantity: row.quantity };
+  res.json(result);
+});
+
 app.get('/api/auth/check', requireAuth, async (req, res) => {
   const { rows } = await pool.query('SELECT username FROM users WHERE id = $1', [req.userId]);
   res.json({ ok: true, username: rows[0]?.username });

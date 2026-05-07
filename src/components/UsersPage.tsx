@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { ALL_TEAMS } from '../data/teams';
+import type { Collection } from '../types';
+import StickerCard from './StickerCard';
 
 interface UserStat {
   username: string;
@@ -8,6 +11,8 @@ interface UserStat {
 
 export default function UsersPage() {
   const [users, setUsers] = useState<UserStat[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [theirCollection, setTheirCollection] = useState<Collection>({});
 
   useEffect(() => {
     fetch('/api/users/stats')
@@ -15,6 +20,57 @@ export default function UsersPage() {
       .then(setUsers)
       .catch(() => {});
   }, []);
+
+  function handleSelectUser(username: string) {
+    setSelected(username);
+    fetch(`/api/users/${encodeURIComponent(username)}/collection`)
+      .then(r => r.json())
+      .then(setTheirCollection)
+      .catch(() => {});
+  }
+
+  if (selected !== null) {
+    return (
+      <div className="page stats-page">
+        <div className="collection-header">
+          <div>
+            <button
+              onClick={() => { setSelected(null); setTheirCollection({}); }}
+              style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: 14, padding: 0, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}
+            >
+              ← Voltar
+            </button>
+            <h2 className="page-title">Faltantes de {selected}</h2>
+          </div>
+          <span className="home-mascot">👥</span>
+        </div>
+
+        {ALL_TEAMS.map((team, idx) => {
+          const missing = team.stickers.filter(s => !theirCollection[s.id]?.quantity);
+          if (missing.length === 0) return null;
+          return (
+            <div key={team.code}>
+              {idx > 0 && <div className="section-divider" />}
+              <div className="team-section">
+                <h3 className="team-name">{team.name}</h3>
+                <div className="stickers-grid">
+                  {missing.map(sticker => (
+                    <StickerCard
+                      key={sticker.id}
+                      sticker={sticker}
+                      quantity={0}
+                      teamColor={team.color}
+                      onToggle={() => {}}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="page stats-page">
@@ -29,7 +85,12 @@ export default function UsersPage() {
       <div className="card">
         <div className="team-ranking">
           {users.map(({ username, obtained, pct }, idx) => (
-            <div key={username} className="ranking-row">
+            <div
+              key={username}
+              className="ranking-row"
+              onClick={() => handleSelectUser(username)}
+              style={{ cursor: 'pointer' }}
+            >
               <span className="ranking-pos">{idx + 1}</span>
               <div className="ranking-info">
                 <span className="ranking-name" style={{ fontSize: '14px' }}>{username}</span>

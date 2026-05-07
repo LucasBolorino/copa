@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SettingsPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error' | 'exists'>('idle');
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,13 +48,23 @@ export default function SettingsPage() {
             onChange={e => setUsername(e.target.value)}
             autoCapitalize="none"
           />
-          <input
-            className="search-input"
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="search-input"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Senha"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={{ paddingRight: 40, width: '100%', boxSizing: 'border-box' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', padding: 0 }}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
           {status === 'ok' && <p style={{ color: '#4CAF50', fontSize: 13 }}>Usuário criado com sucesso!</p>}
           {status === 'exists' && <p style={{ color: '#ef4444', fontSize: 13 }}>Esse usuário já existe.</p>}
           {status === 'error' && <p style={{ color: '#ef4444', fontSize: 13 }}>Erro ao criar usuário.</p>}

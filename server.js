@@ -158,8 +158,23 @@ app.get('/api/users/stats', requireAuth, async (_req, res) => {
   })));
 });
 
-app.get('/api/auth/check', requireAuth, (_req, res) => {
-  res.json({ ok: true });
+app.get('/api/auth/check', requireAuth, async (req, res) => {
+  const { rows } = await pool.query('SELECT username FROM users WHERE id = $1', [req.userId]);
+  res.json({ ok: true, username: rows[0]?.username });
+});
+
+app.post('/api/settings/users', requireAuth, async (req, res) => {
+  const { rows } = await pool.query('SELECT username FROM users WHERE id = $1', [req.userId]);
+  if (rows[0]?.username !== 'bolo') return res.status(403).json({ error: 'forbidden' });
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: 'missing fields' });
+  const hashed = await hashPassword(password);
+  try {
+    await pool.query('INSERT INTO users (username, password) VALUES ($1, $2)', [username, hashed]);
+    res.json({ ok: true });
+  } catch {
+    res.status(409).json({ error: 'username already exists' });
+  }
 });
 
 app.get('/api/collection', requireAuth, async (req, res) => {

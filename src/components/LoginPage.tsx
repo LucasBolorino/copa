@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface Props {
-  onLogin: () => void;
+  onLogin: (username: string) => void;
 }
 
 export default function LoginPage({ onLogin }: Props) {
@@ -21,7 +21,7 @@ export default function LoginPage({ onLogin }: Props) {
         body: JSON.stringify({ username, password }),
       });
       if (res.ok) {
-        onLogin();
+        onLogin(username);
       } else {
         setError(true);
         setPassword('');

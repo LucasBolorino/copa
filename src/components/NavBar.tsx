@@ -1,22 +1,24 @@
-import { Home, BookOpen, BarChart2, Users } from 'lucide-react';
+import { Home, BookOpen, BarChart2, Users, Settings } from 'lucide-react';
 import type { PageType } from '../types';
 
 interface Props {
   current: PageType;
   setPage: (p: PageType) => void;
+  username: string;
 }
 
-const NAV_ITEMS: { key: PageType; label: string; Icon: typeof Home }[] = [
-  { key: 'inicio', label: 'Início', Icon: Home },
-  { key: 'colecao', label: 'Coleção', Icon: BookOpen },
-  { key: 'estatisticas', label: 'Stats', Icon: BarChart2 },
-  { key: 'usuarios', label: 'Usuários', Icon: Users },
-];
+export default function NavBar({ current, setPage, username }: Props) {
+  const items = [
+    { key: 'inicio' as PageType, label: 'Início', Icon: Home },
+    { key: 'colecao' as PageType, label: 'Coleção', Icon: BookOpen },
+    { key: 'estatisticas' as PageType, label: 'Stats', Icon: BarChart2 },
+    { key: 'usuarios' as PageType, label: 'Usuários', Icon: Users },
+    ...(username === 'bolo' ? [{ key: 'configuracoes' as PageType, label: 'Config', Icon: Settings }] : []),
+  ];
 
-export default function NavBar({ current, setPage }: Props) {
   return (
     <nav className="navbar">
-      {NAV_ITEMS.map(({ key, label, Icon }) => (
+      {items.map(({ key, label, Icon }) => (
         <button
           key={key}
           className={`nav-item ${current === key ? 'active' : ''}`}

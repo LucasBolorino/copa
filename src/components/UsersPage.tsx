@@ -93,7 +93,10 @@ export default function UsersPage() {
             >
               <span className="ranking-pos">{idx + 1}</span>
               <div className="ranking-info">
-                <span className="ranking-name" style={{ fontSize: '14px' }}>{username}</span>
+                <span className="ranking-name" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {username}
+                  <span style={{ color: '#4CAF50', fontSize: 12 }}>ver faltantes ›</span>
+                </span>
                 <div className="ranking-bar-wrap">
                   <div
                     className="ranking-bar-fill"

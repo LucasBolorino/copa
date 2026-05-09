@@ -1,5 +1,7 @@
-import { BookOpen, Trophy, BarChart2 } from 'lucide-react';
+import { useState } from 'react';
+import { BookOpen, Trophy, BarChart2, Copy, Check } from 'lucide-react';
 import type { PageType } from '../types';
+import { ALL_TEAMS } from '../data/teams';
 
 interface Stats {
   obtained: number;
@@ -11,9 +13,25 @@ interface Stats {
 interface Props {
   stats: Stats;
   setPage: (p: PageType) => void;
+  getQuantity: (id: string) => number;
 }
 
-export default function HomePage({ stats, setPage }: Props) {
+export default function HomePage({ stats, setPage, getQuantity }: Props) {
+  const [copied, setCopied] = useState(false);
+
+  function copyMissing() {
+    const lines: string[] = [];
+    for (const team of ALL_TEAMS) {
+      const missing = team.stickers.filter(s => getQuantity(s.id) === 0).map(s => s.id);
+      if (missing.length > 0) lines.push(`${team.name}: ${missing.join(', ')}`);
+    }
+    const text = `Figurinhas faltantes (${stats.missing}):\n\n${lines.join('\n')}`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   const milestones = [
     { label: '1ª figurinha!', target: 1, icon: '🌟' },
     { label: '10% do álbum', target: Math.round(stats.total * 0.1), icon: '🥉' },
@@ -107,6 +125,17 @@ export default function HomePage({ stats, setPage }: Props) {
           <div className="action-text">
             <span className="action-title">Estatísticas</span>
             <span className="action-sub">Veja seu progresso por seleção</span>
+          </div>
+          <span className="action-arrow">›</span>
+        </button>
+
+        <button className="action-card" onClick={copyMissing}>
+          <div className="action-icon" style={{ background: 'rgba(239,68,68,0.15)' }}>
+            {copied ? <Check size={22} color="#4CAF50" /> : <Copy size={22} color="#ef4444" />}
+          </div>
+          <div className="action-text">
+            <span className="action-title">{copied ? 'Copiado!' : 'Copiar faltantes'}</span>
+            <span className="action-sub">{copied ? 'Lista copiada para a área de transferência' : `${stats.missing} figurinhas para completar`}</span>
           </div>
           <span className="action-arrow">›</span>
         </button>

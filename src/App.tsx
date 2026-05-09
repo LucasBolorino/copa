@@ -16,7 +16,7 @@ function AuthenticatedApp({ username }: { username: string }) {
   return (
     <div className="app">
       <div className="app-content">
-        {page === 'inicio' && <HomePage stats={stats} setPage={setPage} />}
+        {page === 'inicio' && <HomePage stats={stats} setPage={setPage} getQuantity={getQuantity} />}
         {page === 'colecao' && (
           <CollectionPage getQuantity={getQuantity} toggle={toggle} obtained={stats.obtained} />
         )}

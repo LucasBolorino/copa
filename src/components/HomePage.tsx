@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BookOpen, Trophy, BarChart2, Copy, Check } from 'lucide-react';
 import type { PageType } from '../types';
-import { ALL_TEAMS } from '../data/teams';
+import { TEAMS, SPECIAL_INICIAL, SPECIAL_CAMPEAS, SPECIAL_CC } from '../data/teams';
 
 interface Stats {
   obtained: number;
@@ -20,12 +20,19 @@ export default function HomePage({ stats, setPage, getQuantity }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyMissing() {
+    const sections = [
+      { label: `FWC 🏆`, stickers: SPECIAL_INICIAL.stickers.filter(s => s.number <= 4) },
+      { label: `FWC 🌎`, stickers: SPECIAL_INICIAL.stickers.filter(s => s.number >= 5) },
+      { label: `FWC 📜`, stickers: SPECIAL_CAMPEAS.stickers },
+      ...TEAMS.map(t => ({ label: `${t.code} ${t.flag}`, stickers: t.stickers })),
+      { label: `CC ${SPECIAL_CC.flag}`, stickers: SPECIAL_CC.stickers },
+    ];
     const lines: string[] = [];
-    for (const team of ALL_TEAMS) {
-      const missing = team.stickers.filter(s => getQuantity(s.id) === 0).map(s => s.id);
-      if (missing.length > 0) lines.push(`${team.name}: ${missing.join(', ')}`);
+    for (const { label, stickers } of sections) {
+      const missing = stickers.filter(s => getQuantity(s.id) === 0).map(s => s.number);
+      if (missing.length > 0) lines.push(`${label}: ${missing.join(', ')}`);
     }
-    const text = `Figurinhas faltantes (${stats.missing}):\n\n${lines.join('\n')}`;
+    const text = lines.join('\n');
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -33,12 +40,9 @@ export default function HomePage({ stats, setPage, getQuantity }: Props) {
   }
 
   const milestones = [
-    { label: '1ª figurinha!', target: 1, icon: '🌟' },
-    { label: '10% do álbum', target: Math.round(stats.total * 0.1), icon: '🥉' },
-    { label: '25% do álbum', target: Math.round(stats.total * 0.25), icon: '🥈' },
-    { label: '50% do álbum', target: Math.round(stats.total * 0.5), icon: '🥇' },
-    { label: '75% do álbum', target: Math.round(stats.total * 0.75), icon: '🏆' },
-    { label: 'Álbum completo!', target: stats.total, icon: '👑' },
+    { label: '1ª', target: 1, icon: '🌟' },
+    { label: '10%', target: Math.round(stats.total * 0.1), icon: '🥉' },
+    { label: '25%', target: Math.round(stats.total * 0.25), icon: '🥈' },
   ];
 
   const achieved = milestones.filter(m => stats.obtained >= m.target);

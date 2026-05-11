@@ -43,6 +43,8 @@ export default function HomePage({ stats, setPage, getQuantity }: Props) {
     { label: '1ª', target: 1, icon: '🌟' },
     { label: '10%', target: Math.round(stats.total * 0.1), icon: '🥉' },
     { label: '25%', target: Math.round(stats.total * 0.25), icon: '🥈' },
+    { label: '50%', target: Math.round(stats.total * 0.5), icon: '🥇' },
+    { label: '75%', target: Math.round(stats.total * 0.75), icon: '🏆' },
   ];
 
   const achieved = milestones.filter(m => stats.obtained >= m.target);

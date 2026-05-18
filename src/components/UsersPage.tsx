@@ -13,6 +13,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserStat[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [theirCollection, setTheirCollection] = useState<Collection>({});
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetch('/api/users/stats')
@@ -23,6 +24,7 @@ export default function UsersPage() {
 
   function handleSelectUser(username: string) {
     setSelected(username);
+    setSearch('');
     fetch(`/api/users/${encodeURIComponent(username)}/collection`)
       .then(r => r.json())
       .then(setTheirCollection)
@@ -45,8 +47,21 @@ export default function UsersPage() {
           <span className="home-mascot">👥</span>
         </div>
 
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Buscar figurinha..."
+          value={search}
+          onChange={e => setSearch(e.target.value.toUpperCase())}
+          autoCapitalize="characters"
+          style={{ marginBottom: 8 }}
+        />
+
         {ALL_TEAMS.map((team, idx) => {
-          const missing = team.stickers.filter(s => !theirCollection[s.id]?.quantity);
+          const q = search.trim();
+          const missing = team.stickers.filter(s =>
+            !theirCollection[s.id]?.quantity && (!q || s.id.includes(q))
+          );
           if (missing.length === 0) return null;
           return (
             <div key={team.code}>
